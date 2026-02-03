@@ -10,104 +10,37 @@ APIFY_API_TOKEN = os.getenv('APIFY_API_TOKEN')
 ACTOR_ID = "apidojo~tweet-scraper"
 
 
-def parse_natural_language(user_input):
+def parse_search_input(user_input):
     """
-    Convert natural language search to Twitter search syntax.
-
-    Examples:
-    - "give me top 50 posts about OpenClaw" -> "OpenClaw"
-    - "search for OpenClaw with at least 100 likes" -> "OpenClaw min_faves:100"
-    - "find tweets from elonmusk about AI" -> "AI from:elonmusk"
-    - "OpenClaw excluding spam" -> "OpenClaw -spam"
+    Simple parsing - extract the main search term from natural language.
+    Pass Twitter search operators directly without modification.
     """
-    query_parts = []
     original = user_input.strip()
 
-    # If it already looks like Twitter search syntax, use as-is
-    if re.search(r'(min_faves:|from:|since:|until:|-\w)', original):
+    # If it contains Twitter search operators, use as-is
+    if re.search(r'(min_faves:|from:|since:|until:|to:|\-\w|#\w|@\w)', original):
         return original, extract_count(original)
 
-    # Extract keyword/topic
-    keyword_patterns = [
-        r'(?:keyword|topic|about|for|find|search|get)\s*[:\s]+["\']?([^"\',.]+)["\']?',
-        r'(?:posts?|tweets?)\s+(?:about|on|for)\s+["\']?([^"\',.]+)["\']?',
-        r'["\']([^"\']+)["\']',  # Quoted phrases
+    # Try to extract keyword from natural language
+    # Pattern: "keyword: X" or "about X" or "for X"
+    patterns = [
+        r'keyword[:\s]+["\']?([^"\']+)["\']?',
+        r'(?:about|for|on)\s+["\']?([^"\',.]+)["\']?',
+        r'(?:search|find|get)\s+["\']?([^"\',.]+)["\']?',
     ]
 
-    keyword = None
-    for pattern in keyword_patterns:
+    for pattern in patterns:
         match = re.search(pattern, original, re.IGNORECASE)
         if match:
             keyword = match.group(1).strip()
-            break
+            # Clean up common words from the extracted keyword
+            keyword = re.sub(r'\b(the|top|most|liked|popular|twitter|posts?|tweets?)\b', '', keyword, flags=re.IGNORECASE)
+            keyword = re.sub(r'\s+', ' ', keyword).strip()
+            if keyword:
+                return keyword, extract_count(original)
 
-    # If no keyword found via patterns, try to extract the main topic
-    if not keyword:
-        # Remove common filler words and extract what's left
-        cleaned = re.sub(r'\b(give|me|the|top|get|find|search|show|liked|popular|twitter|posts?|tweets?|with|from|about|please|can|you|i|want)\b', '', original, flags=re.IGNORECASE)
-        cleaned = re.sub(r'\d+', '', cleaned)  # Remove numbers
-        cleaned = re.sub(r'\s+', ' ', cleaned).strip()
-        if cleaned:
-            # Take the most significant remaining word(s)
-            words = cleaned.split()
-            keyword = ' '.join(w for w in words if len(w) > 2)[:50]
-
-    if keyword:
-        query_parts.append(keyword)
-
-    # Extract minimum likes/faves
-    likes_patterns = [
-        r'(?:at\s+least|minimum|min|more\s+than|over|>\s*)\s*(\d+)\s*(?:likes?|faves?|favorites?)',
-        r'(\d+)\+?\s*(?:likes?|faves?)',
-        r'min_faves:\s*(\d+)',
-    ]
-    for pattern in likes_patterns:
-        match = re.search(pattern, original, re.IGNORECASE)
-        if match:
-            query_parts.append(f"min_faves:{match.group(1)}")
-            break
-
-    # Extract "from" user
-    from_patterns = [
-        r'from\s*[:\s]+@?(\w+)',
-        r'by\s+@?(\w+)',
-        r'from:@?(\w+)',
-    ]
-    for pattern in from_patterns:
-        match = re.search(pattern, original, re.IGNORECASE)
-        if match:
-            query_parts.append(f"from:{match.group(1)}")
-            break
-
-    # Extract exclusions
-    exclude_patterns = [
-        r'(?:excluding?|without|no|remove|-)\s*[:\s]*["\']?(\w+)["\']?',
-        r'-(\w+)',
-    ]
-    for pattern in exclude_patterns:
-        matches = re.findall(pattern, original, re.IGNORECASE)
-        for match in matches:
-            if match.lower() not in ['spam', 'bot', 'bots']:
-                continue  # Only exclude common spam words
-            query_parts.append(f"-{match}")
-
-    # Extract date filters
-    date_patterns = [
-        r'since\s*[:\s]+(\d{4}-\d{2}-\d{2})',
-        r'after\s+(\d{4}-\d{2}-\d{2})',
-        r'since:(\d{4}-\d{2}-\d{2})',
-    ]
-    for pattern in date_patterns:
-        match = re.search(pattern, original, re.IGNORECASE)
-        if match:
-            query_parts.append(f"since:{match.group(1)}")
-            break
-
-    # Build final query
-    final_query = ' '.join(query_parts) if query_parts else original
-    count = extract_count(original)
-
-    return final_query, count
+    # Last resort: just use the input as-is
+    return original, extract_count(original)
 
 
 def extract_count(text):
@@ -221,7 +154,7 @@ def search():
             return jsonify({'error': 'APIFY_API_TOKEN not configured'}), 500
 
         # Parse natural language to Twitter search syntax
-        twitter_query, count = parse_natural_language(user_input)
+        twitter_query, count = parse_search_input(user_input)
 
         # Override count if provided in request
         if data.get('count'):
