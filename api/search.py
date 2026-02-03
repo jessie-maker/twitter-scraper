@@ -69,18 +69,29 @@ def scrape_twitter_direct(keyword, count=50):
 
     results = []
     for item in items:
+        # Skip invalid items
         author = item.get('author', {})
-        author_name = author.get('userName', 'Unknown')
-        text = item.get('text', '')
+        author_name = author.get('userName') or author.get('username') or item.get('username')
+        if not author_name:
+            continue
+
+        text = item.get('text') or item.get('full_text') or ''
+        if not text:
+            continue
+
         analysis = analyze_tweet(text)
+        tweet_url = item.get('url') or item.get('tweet_url')
+        if not tweet_url:
+            tweet_id = item.get('id') or item.get('id_str')
+            tweet_url = f"https://x.com/{author_name}/status/{tweet_id}" if tweet_id else ''
 
         results.append({
             'authorName': f"@{author_name}",
             'authorUrl': f"https://x.com/{author_name}",
-            'postUrl': item.get('url', f"https://x.com/{author_name}/status/{item.get('id', '')}"),
+            'postUrl': tweet_url,
             'theme': analysis['theme'],
             'summary': analysis['summary'],
-            'likes': item.get('likeCount', 0),
+            'likes': item.get('likeCount') or item.get('favorite_count') or 0,
         })
 
     results.sort(key=lambda x: x.get('likes', 0), reverse=True)
