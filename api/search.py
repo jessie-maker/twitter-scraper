@@ -1,26 +1,17 @@
 from flask import Flask, request, jsonify
-import json
+import requests
 import os
 import re
+import time
 
 app = Flask(__name__)
 
-# Check if apify_client is available
-try:
-    from apify_client import ApifyClient
-    APIFY_AVAILABLE = True
-except ImportError:
-    APIFY_AVAILABLE = False
-
 APIFY_API_TOKEN = os.getenv('APIFY_API_TOKEN')
-ACTOR_ID = "apidojo/tweet-scraper"
+ACTOR_ID = "apidojo~tweet-scraper"
 
 
 def extract_keyword(prompt):
-    patterns = [
-        r"keyword\s+['\"]?(\w+)['\"]?",
-        r"about\s+['\"]?(\w+)['\"]?",
-    ]
+    patterns = [r"keyword\s+['\"]?(\w+)['\"]?", r"about\s+['\"]?(\w+)['\"]?"]
     for pattern in patterns:
         match = re.search(pattern, prompt, re.IGNORECASE)
         if match:
@@ -38,19 +29,46 @@ def analyze_tweet(text):
     return {'theme': theme, 'summary': summary}
 
 
-def scrape_twitter(keyword, count=50):
-    if not APIFY_AVAILABLE or not APIFY_API_TOKEN:
-        raise ValueError("Apify not configured")
+def scrape_twitter_direct(keyword, count=50):
+    """Use Apify REST API directly instead of library"""
+    if not APIFY_API_TOKEN:
+        raise ValueError("APIFY_API_TOKEN not configured")
 
-    client = ApifyClient(APIFY_API_TOKEN)
-    run = client.actor(ACTOR_ID).call(run_input={
+    # Start the actor run
+    start_url = f"https://api.apify.com/v2/acts/{ACTOR_ID}/runs?token={APIFY_API_TOKEN}"
+    run_input = {
         "searchTerms": [keyword],
         "maxTweets": count,
         "sort": "Top",
-    })
+    }
+
+    response = requests.post(start_url, json=run_input, timeout=30)
+    if response.status_code != 201:
+        raise ValueError(f"Failed to start actor: {response.text}")
+
+    run_data = response.json()
+    run_id = run_data['data']['id']
+    dataset_id = run_data['data']['defaultDatasetId']
+
+    # Wait for the run to finish (poll status)
+    status_url = f"https://api.apify.com/v2/actor-runs/{run_id}?token={APIFY_API_TOKEN}"
+    for _ in range(60):  # Wait up to 5 minutes
+        time.sleep(5)
+        status_response = requests.get(status_url, timeout=30)
+        status_data = status_response.json()
+        status = status_data['data']['status']
+        if status == 'SUCCEEDED':
+            break
+        elif status in ['FAILED', 'ABORTED', 'TIMED-OUT']:
+            raise ValueError(f"Actor run failed: {status}")
+
+    # Get results from dataset
+    items_url = f"https://api.apify.com/v2/datasets/{dataset_id}/items?token={APIFY_API_TOKEN}"
+    items_response = requests.get(items_url, timeout=30)
+    items = items_response.json()
 
     results = []
-    for item in client.dataset(run["defaultDatasetId"]).iterate_items():
+    for item in items:
         author = item.get('author', {})
         author_name = author.get('userName', 'Unknown')
         text = item.get('text', '')
@@ -81,7 +99,7 @@ def search():
     try:
         data = request.get_json() or {}
         keyword = data.get('keyword') or extract_keyword(data.get('prompt', ''))
-        count = data.get('count', 50)
+        count = min(data.get('count', 20), 50)  # Limit to 50
 
         if not keyword:
             return jsonify({'error': 'No keyword provided'}), 400
@@ -89,7 +107,7 @@ def search():
         if not APIFY_API_TOKEN:
             return jsonify({'error': 'APIFY_API_TOKEN not configured'}), 500
 
-        results = scrape_twitter(keyword, count)
+        results = scrape_twitter_direct(keyword, count)
         response = jsonify({'success': True, 'results': results, 'keyword': keyword})
         response.headers['Access-Control-Allow-Origin'] = '*'
         return response
@@ -100,6 +118,8 @@ def search():
         return response, 500
 
 
-# Vercel handler
-def handler(environ, start_response):
-    return app(environ, start_response)
+@app.route('/api/search', methods=['GET'])
+def health():
+    response = jsonify({'status': 'ok', 'configured': bool(APIFY_API_TOKEN)})
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
