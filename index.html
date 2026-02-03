@@ -568,13 +568,14 @@
             `;
 
             try {
+                // Send the full search query directly to the API
                 const response = await fetch('/api/search', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        keyword: input,
+                        query: input,
                         count: 50
                     })
                 });

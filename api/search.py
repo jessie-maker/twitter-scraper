@@ -109,17 +109,19 @@ def search():
 
     try:
         data = request.get_json() or {}
-        keyword = data.get('keyword') or extract_keyword(data.get('prompt', ''))
+        # Use the full search query directly - don't extract keywords
+        search_query = data.get('query') or data.get('keyword') or data.get('prompt', '')
+        search_query = search_query.strip()
         count = min(data.get('count', 20), 50)  # Limit to 50
 
-        if not keyword:
-            return jsonify({'error': 'No keyword provided'}), 400
+        if not search_query:
+            return jsonify({'error': 'No search query provided'}), 400
 
         if not APIFY_API_TOKEN:
             return jsonify({'error': 'APIFY_API_TOKEN not configured'}), 500
 
-        results = scrape_twitter_direct(keyword, count)
-        response = jsonify({'success': True, 'results': results, 'keyword': keyword})
+        results = scrape_twitter_direct(search_query, count)
+        response = jsonify({'success': True, 'results': results, 'query': search_query})
         response.headers['Access-Control-Allow-Origin'] = '*'
         return response
 
