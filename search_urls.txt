@@ -1,0 +1,8 @@
+Clawbot:
+https://twitter.com/search?q=Clawbot&src=typed_query&f=live
+https://nitter.net/search?f=tweets&q=Clawbot
+
+moltbot:
+https://twitter.com/search?q=moltbot&src=typed_query&f=live
+https://nitter.net/search?f=tweets&q=moltbot
+

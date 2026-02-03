@@ -1,0 +1,12 @@
+Manual Twitter Search Instructions
+==================================================
+
+Clawbot search:
+https://twitter.com/search?q=Clawbot&src=typed_query&f=live
+
+moltbot search:
+https://twitter.com/search?q=moltbot&src=typed_query&f=live
+
+Alternative (nitter.net):
+https://nitter.net/search?f=tweets&q=Clawbot
+https://nitter.net/search?f=tweets&q=moltbot
