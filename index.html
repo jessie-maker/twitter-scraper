@@ -10,14 +10,14 @@
             padding: 0;
             box-sizing: border-box;
         }
-        
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
         }
-        
+
         .container {
             max-width: 1200px;
             margin: 0 auto;
@@ -25,37 +25,159 @@
             border-radius: 16px;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             overflow: hidden;
+            position: relative;
         }
-        
+
         .header {
             background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%);
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
-        
+
         .header h1 {
             font-size: 32px;
             margin-bottom: 10px;
         }
-        
+
         .header p {
             opacity: 0.9;
             font-size: 16px;
         }
-        
+
+        .help-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            border: 2px solid white;
+            color: white;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .help-btn:hover {
+            background: white;
+            color: #1da1f2;
+        }
+
+        /* Modal styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 16px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, #1da1f2 0%, #0d8bd9 100%);
+            color: white;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            font-size: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            cursor: pointer;
+            padding: 0;
+            line-height: 1;
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        .search-tip {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 12px 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid #1da1f2;
+        }
+
+        .search-tip-title {
+            font-weight: 600;
+            color: #14171a;
+            margin-bottom: 5px;
+        }
+
+        .search-tip-example {
+            font-family: monospace;
+            background: #e8f5fe;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #1da1f2;
+            font-size: 13px;
+        }
+
+        .search-tip-desc {
+            color: #657786;
+            font-size: 13px;
+            margin-top: 5px;
+        }
+
         .search-section {
             padding: 30px;
             background: #f8f9fa;
             border-bottom: 1px solid #e1e8ed;
         }
-        
+
         .search-box {
             display: flex;
             gap: 10px;
             margin-bottom: 15px;
         }
-        
+
         .search-input {
             flex: 1;
             padding: 15px 20px;
@@ -64,13 +186,13 @@
             font-size: 16px;
             transition: all 0.3s;
         }
-        
+
         .search-input:focus {
             outline: none;
             border-color: #1da1f2;
             box-shadow: 0 0 0 3px rgba(29, 161, 242, 0.1);
         }
-        
+
         .search-btn {
             background: #1da1f2;
             color: white;
@@ -82,26 +204,26 @@
             cursor: pointer;
             transition: all 0.3s;
         }
-        
+
         .search-btn:hover {
             background: #1a91da;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(29, 161, 242, 0.3);
         }
-        
+
         .search-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .example-prompts {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
             margin-top: 15px;
         }
-        
+
         .example-prompt {
             background: white;
             border: 1px solid #e1e8ed;
@@ -111,29 +233,29 @@
             cursor: pointer;
             transition: all 0.2s;
         }
-        
+
         .example-prompt:hover {
             background: #1da1f2;
             color: white;
             border-color: #1da1f2;
         }
-        
+
         .results-section {
             padding: 30px;
         }
-        
+
         .results-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        
+
         .results-count {
             font-size: 18px;
             color: #657786;
         }
-        
+
         .download-btn {
             background: #1da1f2;
             color: white;
@@ -148,24 +270,24 @@
             gap: 8px;
             transition: all 0.3s;
         }
-        
+
         .download-btn:hover {
             background: #1a91da;
             transform: translateY(-2px);
         }
-        
+
         .download-btn:disabled {
             background: #ccc;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .results-table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
         }
-        
+
         .results-table th {
             background: #f8f9fa;
             padding: 15px;
@@ -187,31 +309,31 @@
             color: #e0245e;
             font-weight: 500;
         }
-        
+
         .results-table tr:hover {
             background: #f8f9fa;
         }
-        
+
         .author-link {
             color: #1da1f2;
             text-decoration: none;
             font-weight: 500;
         }
-        
+
         .author-link:hover {
             text-decoration: underline;
         }
-        
+
         .post-link {
             color: #1da1f2;
             text-decoration: none;
             word-break: break-all;
         }
-        
+
         .post-link:hover {
             text-decoration: underline;
         }
-        
+
         .theme-badge {
             display: inline-block;
             padding: 4px 12px;
@@ -220,29 +342,29 @@
             font-weight: 500;
             margin-right: 8px;
         }
-        
+
         .theme-use-case {
             background: #e8f5fe;
             color: #1da1f2;
         }
-        
+
         .theme-other {
             background: #f7f9fa;
             color: #657786;
         }
-        
+
         .summary {
             color: #657786;
             font-size: 14px;
             line-height: 1.5;
         }
-        
+
         .loading {
             text-align: center;
             padding: 40px;
             color: #657786;
         }
-        
+
         .spinner {
             border: 3px solid #f3f3f3;
             border-top: 3px solid #1da1f2;
@@ -252,12 +374,12 @@
             animation: spin 1s linear infinite;
             margin: 0 auto 20px;
         }
-        
+
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        
+
         .error {
             background: #fee;
             color: #c33;
@@ -266,13 +388,13 @@
             margin: 20px 0;
             border-left: 4px solid #c33;
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: #657786;
         }
-        
+
         .empty-state svg {
             width: 80px;
             height: 80px;
@@ -282,19 +404,85 @@
     </style>
 </head>
 <body>
+    <!-- Help Modal -->
+    <div class="modal-overlay" id="helpModal" onclick="closeHelpModal(event)">
+        <div class="modal" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Search Tips</h2>
+                <button class="modal-close" onclick="closeHelpModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="search-tip">
+                    <div class="search-tip-title">Keywords</div>
+                    <div class="search-tip-example">OpenClaw</div>
+                    <div class="search-tip-desc">Search for tweets containing this word</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">Hashtags</div>
+                    <div class="search-tip-example">#robotics</div>
+                    <div class="search-tip-desc">Search for tweets with specific hashtags</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">From specific user</div>
+                    <div class="search-tip-example">from:elonmusk</div>
+                    <div class="search-tip-desc">Only tweets from a specific account</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">Mentions</div>
+                    <div class="search-tip-example">@anthropic</div>
+                    <div class="search-tip-desc">Tweets mentioning a specific account</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">Exact phrase</div>
+                    <div class="search-tip-example">"computer use"</div>
+                    <div class="search-tip-desc">Search for exact phrase in quotes</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">Exclude words</div>
+                    <div class="search-tip-example">OpenClaw -spam</div>
+                    <div class="search-tip-desc">Exclude tweets containing certain words</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">Minimum likes</div>
+                    <div class="search-tip-example">OpenClaw min_faves:100</div>
+                    <div class="search-tip-desc">Only tweets with at least 100 likes</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">Date range</div>
+                    <div class="search-tip-example">OpenClaw since:2024-01-01</div>
+                    <div class="search-tip-desc">Tweets after a specific date</div>
+                </div>
+
+                <div class="search-tip">
+                    <div class="search-tip-title">Combine filters</div>
+                    <div class="search-tip-example">"AI agents" from:anthropic min_faves:50</div>
+                    <div class="search-tip-desc">Combine multiple filters for precise results</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container">
         <div class="header">
-            <h1>🐦 Twitter Scraper & Analyzer</h1>
+            <button class="help-btn" onclick="openHelpModal()" title="Search Tips">?</button>
+            <h1>Twitter Scraper & Analyzer</h1>
             <p>Search, analyze, and export Twitter posts with AI-powered insights</p>
         </div>
-        
+
         <div class="search-section">
             <div class="search-box">
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    class="search-input" 
-                    placeholder="Enter your search prompt, e.g., 'give me the top 50 liked twitter posts with keyword OpenClaw'"
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search-input"
+                    placeholder="Enter search query, e.g., 'OpenClaw min_faves:50' - click ? for tips"
                     onkeypress="if(event.key === 'Enter') searchTwitter()"
                 >
                 <button class="search-btn" onclick="searchTwitter()" id="searchBtn">
@@ -303,31 +491,31 @@
             </div>
             <div class="example-prompts">
                 <span style="color: #657786; margin-right: 10px;">Examples:</span>
-                <span class="example-prompt" onclick="setPrompt('give me the top 50 liked twitter posts with keyword clawbot')">
-                    Top 50 Clawbot posts
+                <span class="example-prompt" onclick="setPrompt('clawbot')">
+                    clawbot
                 </span>
-                <span class="example-prompt" onclick="setPrompt('give me the top 50 liked twitter posts with keyword OpenClaw')">
-                    Top 50 OpenClaw posts
+                <span class="example-prompt" onclick="setPrompt('OpenClaw min_faves:10')">
+                    OpenClaw min_faves:10
                 </span>
-                <span class="example-prompt" onclick="setPrompt('give me the top 50 liked twitter posts with keyword moltbot')">
-                    Top 50 moltbot posts
+                <span class="example-prompt" onclick="setPrompt('moltbot')">
+                    moltbot
                 </span>
-                <span class="example-prompt" onclick="setPrompt('give me the top 20 liked twitter posts about AI agents')">
-                    Top 20 AI agents posts
+                <span class="example-prompt" onclick="setPrompt('#AIagents')">
+                    #AIagents
                 </span>
             </div>
         </div>
-        
+
         <div class="results-section">
             <div id="resultsContainer">
                 <div class="empty-state">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path d="M23.643 4.937c-.835.37-1.732.62-2.675.733.962-.576 1.7-1.49 2.048-2.578-.9.534-1.897.922-2.958 1.13-.85-.904-2.06-1.47-3.4-1.47-2.572 0-4.658 2.086-4.658 4.66 0 .364.042.718.12 1.06-3.873-.195-7.304-2.05-9.602-4.868-.4.69-.63 1.49-.63 2.342 0 1.616.823 3.043 2.072 3.878-.764-.025-1.482-.234-2.11-.583v.06c0 2.257 1.605 4.14 3.737 4.568-.39.106-.8.162-1.227.162-.3 0-.593-.028-.877-.082.593 1.85 2.313 3.198 4.352 3.234-1.595 1.25-3.604 1.995-5.786 1.995-.376 0-.747-.022-1.112-.065 2.062 1.323 4.51 2.093 7.14 2.093 8.57 0 13.255-7.098 13.255-13.254 0-.2-.005-.402-.014-.602.91-.658 1.7-1.477 2.323-2.41z"/>
                     </svg>
-                    <h3>Enter a search prompt to get started</h3>
-                    <p>Try one of the example prompts above or create your own</p>
+                    <h3>Enter a search query to get started</h3>
+                    <p>Click the <strong>?</strong> button for search tips</p>
                     <p style="font-size: 12px; color: #999; margin-top: 10px;">
-                        Powered by Apify Tweet Scraper - Real tweets with working links!
+                        Powered by Apify Tweet Scraper
                     </p>
                 </div>
             </div>
@@ -337,6 +525,23 @@
     <script>
         let currentResults = [];
 
+        function openHelpModal() {
+            document.getElementById('helpModal').classList.add('active');
+        }
+
+        function closeHelpModal(event) {
+            if (!event || event.target === document.getElementById('helpModal')) {
+                document.getElementById('helpModal').classList.remove('active');
+            }
+        }
+
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeHelpModal();
+            }
+        });
+
         function setPrompt(text) {
             document.getElementById('searchInput').value = text;
         }
@@ -344,44 +549,33 @@
         async function searchTwitter() {
             const input = document.getElementById('searchInput').value.trim();
             if (!input) {
-                alert('Please enter a search prompt');
+                alert('Please enter a search query');
                 return;
             }
 
             const searchBtn = document.getElementById('searchBtn');
             const resultsContainer = document.getElementById('resultsContainer');
-            
+
             searchBtn.disabled = true;
             searchBtn.textContent = 'Searching...';
-            
+
             resultsContainer.innerHTML = `
                 <div class="loading">
                     <div class="spinner"></div>
-                    <p>Searching Twitter and analyzing posts...</p>
+                    <p>Searching Twitter...</p>
                     <p style="font-size: 14px; margin-top: 10px; color: #999;">This may take a moment</p>
                 </div>
             `;
 
             try {
-                // Extract keyword from prompt
-                const keywordMatch = input.match(/keyword\s+['"]?(\w+)['"]?/i) ||
-                                   input.match(/about\s+['"]?(\w+)['"]?/i) ||
-                                   input.match(/(?:top|most)\s+\d+\s+(?:liked|popular).*?(\w+)/i);
-
-                const keyword = keywordMatch ? keywordMatch[1] : input.split(' ').pop();
-                const countMatch = input.match(/top\s+(\d+)/i);
-                const count = countMatch ? parseInt(countMatch[1]) : 50;
-
-                // Call backend API
                 const response = await fetch('/api/search', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        prompt: input,
-                        keyword: keyword,
-                        count: count
+                        keyword: input,
+                        count: 50
                     })
                 });
 
@@ -390,8 +584,7 @@
                 if (data.error) {
                     resultsContainer.innerHTML = `
                         <div class="error">
-                            <strong>Error:</strong> ${data.error}<br>
-                            ${data.message || ''}
+                            <strong>Error:</strong> ${data.error}
                         </div>
                     `;
                     return;
@@ -405,7 +598,7 @@
                 resultsContainer.innerHTML = `
                     <div class="error">
                         <strong>Error:</strong> ${error.message}<br>
-                        <small>Note: This is a frontend-only demo. To enable full functionality, you'll need to set up a backend API.</small>
+                        <small>Make sure the backend API is running.</small>
                     </div>
                 `;
             } finally {
@@ -416,12 +609,12 @@
 
         function displayResults(results) {
             const resultsContainer = document.getElementById('resultsContainer');
-            
+
             if (!results || results.length === 0) {
                 resultsContainer.innerHTML = `
                     <div class="empty-state">
                         <h3>No results found</h3>
-                        <p>Try a different search term</p>
+                        <p>Try a different search term or check the search tips</p>
                     </div>
                 `;
                 return;
@@ -431,7 +624,7 @@
                 <div class="results-header">
                     <div class="results-count">Found ${results.length} posts</div>
                     <button class="download-btn" onclick="downloadResults()">
-                        📥 Download Results
+                        Download CSV
                     </button>
                 </div>
                 <table class="results-table">
@@ -447,7 +640,7 @@
                     <tbody>
             `;
 
-            results.forEach((result, index) => {
+            results.forEach((result) => {
                 const themeClass = result.theme === 'Use Case' ? 'theme-use-case' : 'theme-other';
                 const likes = result.likes || 0;
                 const likesDisplay = likes >= 1000 ? (likes / 1000).toFixed(1) + 'K' : likes;
@@ -490,7 +683,6 @@
                 return;
             }
 
-            // Create CSV content
             let csv = 'Author Name,Author URL,Post Link,Likes,Theme,Summary\n';
 
             currentResults.forEach(result => {
@@ -504,309 +696,19 @@
                 csv += `${authorName},${authorUrl},${postUrl},${likes},${theme},${summary}\n`;
             });
 
-            // Create and download file
             const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
-            
+
             link.setAttribute('href', url);
             link.setAttribute('download', `twitter_results_${Date.now()}.csv`);
             link.style.visibility = 'hidden';
-            
+
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
         }
 
-        function getMockData(keyword, count) {
-            // Real Twitter URLs for clawbot/openclaw - using actual URL patterns
-            const mockData = {
-                'clawbot': [
-                    {
-                        authorName: 'qrimeCapital',
-                        authorUrl: 'https://x.com/qrimeCapital',
-                        postUrl: 'https://x.com/qrimeCapital/status/2017352450034880665?s=20',
-                        theme: 'Use Case',
-                        summary: 'Discussion about Clawbot capabilities and applications in automation workflows.'
-                    },
-                    {
-                        authorName: 'clawd_bot',
-                        authorUrl: 'https://x.com/clawd_bot',
-                        postUrl: 'https://x.com/clawd_bot/status/2018000000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Clawbot can automate complex multi-step workflows by breaking them into smaller tasks and coordinating between different tools and APIs.'
-                    },
-                    {
-                        authorName: 'TechEnthusiast',
-                        authorUrl: 'https://x.com/TechEnthusiast',
-                        postUrl: 'https://x.com/TechEnthusiast/status/2017500000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Clawbot for web research and data extraction, allowing it to browse multiple sources and compile comprehensive reports automatically.'
-                    },
-                    {
-                        authorName: 'DevTools',
-                        authorUrl: 'https://x.com/DevTools',
-                        postUrl: 'https://x.com/DevTools/status/2017600000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Clawbot helps developers automate code reviews by analyzing pull requests, running tests, and generating feedback reports.'
-                    },
-                    {
-                        authorName: 'DataScientist',
-                        authorUrl: 'https://x.com/DataScientist',
-                        postUrl: 'https://x.com/DataScientist/status/2017700000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Clawbot to scrape and analyze social media data, then generate insights and visualizations automatically.'
-                    },
-                    {
-                        authorName: 'ProductManager',
-                        authorUrl: 'https://x.com/ProductManager',
-                        postUrl: 'https://x.com/ProductManager/status/2017800000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Clawbot automates competitive analysis by monitoring competitor websites, tracking pricing changes, and compiling weekly reports.'
-                    },
-                    {
-                        authorName: 'MarketingPro',
-                        authorUrl: 'https://x.com/MarketingPro',
-                        postUrl: 'https://x.com/MarketingPro/status/2017900000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Clawbot to manage social media campaigns by scheduling posts, analyzing engagement, and responding to comments.'
-                    },
-                    {
-                        authorName: 'StartupFounder',
-                        authorUrl: 'https://x.com/StartupFounder',
-                        postUrl: 'https://x.com/StartupFounder/status/2018000000000000001?s=20',
-                        theme: 'Use Case',
-                        summary: 'Clawbot helps with lead generation by scraping contact information from websites and organizing it into CRM systems.'
-                    },
-                    {
-                        authorName: 'ContentCreator',
-                        authorUrl: 'https://x.com/ContentCreator',
-                        postUrl: 'https://x.com/ContentCreator/status/2018100000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Clawbot to research trending topics, gather sources, and draft blog post outlines automatically.'
-                    },
-                    {
-                        authorName: 'EcommerceOwner',
-                        authorUrl: 'https://x.com/EcommerceOwner',
-                        postUrl: 'https://x.com/EcommerceOwner/status/2018200000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Clawbot automates inventory management by monitoring stock levels, updating product listings, and sending alerts.'
-                    }
-                ],
-                'openclaw': [
-                    {
-                        authorName: 'qrimeCapital',
-                        authorUrl: 'https://x.com/qrimeCapital',
-                        postUrl: 'https://x.com/qrimeCapital/status/2017352450034880665?s=20',
-                        theme: 'Use Case',
-                        summary: 'OpenClaw discussion about AI agent capabilities and real-world applications.'
-                    },
-                    {
-                        authorName: 'TechEnthusiast',
-                        authorUrl: 'https://twitter.com/TechEnthusiast',
-                        postUrl: 'https://twitter.com/TechEnthusiast/status/1234567891',
-                        theme: 'Use Case',
-                        summary: 'Using OpenClaw for web research and data extraction, allowing it to browse multiple sources and compile comprehensive reports automatically.'
-                    },
-                    {
-                        authorName: 'DevTools',
-                        authorUrl: 'https://twitter.com/DevTools',
-                        postUrl: 'https://twitter.com/DevTools/status/1234567892',
-                        theme: 'Use Case',
-                        summary: 'OpenClaw helps developers automate code reviews by analyzing pull requests, running tests, and generating feedback reports.'
-                    },
-                    {
-                        authorName: 'DataScientist',
-                        authorUrl: 'https://twitter.com/DataScientist',
-                        postUrl: 'https://twitter.com/DataScientist/status/1234567893',
-                        theme: 'Use Case',
-                        summary: 'Using OpenClaw to scrape and analyze social media data, then generate insights and visualizations automatically.'
-                    },
-                    {
-                        authorName: 'ProductManager',
-                        authorUrl: 'https://twitter.com/ProductManager',
-                        postUrl: 'https://twitter.com/ProductManager/status/1234567894',
-                        theme: 'Use Case',
-                        summary: 'OpenClaw automates competitive analysis by monitoring competitor websites, tracking pricing changes, and compiling weekly reports.'
-                    },
-                    {
-                        authorName: 'MarketingPro',
-                        authorUrl: 'https://twitter.com/MarketingPro',
-                        postUrl: 'https://twitter.com/MarketingPro/status/1234567895',
-                        theme: 'Use Case',
-                        summary: 'Using OpenClaw to manage social media campaigns by scheduling posts, analyzing engagement, and responding to comments.'
-                    },
-                    {
-                        authorName: 'StartupFounder',
-                        authorUrl: 'https://twitter.com/StartupFounder',
-                        postUrl: 'https://twitter.com/StartupFounder/status/1234567896',
-                        theme: 'Use Case',
-                        summary: 'OpenClaw helps with lead generation by scraping contact information from websites and organizing it into CRM systems.'
-                    },
-                    {
-                        authorName: 'ContentCreator',
-                        authorUrl: 'https://twitter.com/ContentCreator',
-                        postUrl: 'https://twitter.com/ContentCreator/status/1234567897',
-                        theme: 'Use Case',
-                        summary: 'Using OpenClaw to research trending topics, gather sources, and draft blog post outlines automatically.'
-                    },
-                    {
-                        authorName: 'EcommerceOwner',
-                        authorUrl: 'https://twitter.com/EcommerceOwner',
-                        postUrl: 'https://twitter.com/EcommerceOwner/status/1234567898',
-                        theme: 'Use Case',
-                        summary: 'OpenClaw automates inventory management by monitoring stock levels, updating product listings, and sending alerts.'
-                    },
-                    {
-                        authorName: 'Researcher',
-                        authorUrl: 'https://twitter.com/Researcher',
-                        postUrl: 'https://twitter.com/Researcher/status/1234567899',
-                        theme: 'Use Case',
-                        summary: 'Using OpenClaw to collect academic papers, extract key findings, and generate literature review summaries.'
-                    }
-                ],
-                'moltbot': [
-                    {
-                        authorName: 'moltbot',
-                        authorUrl: 'https://x.com/moltbot',
-                        postUrl: 'https://x.com/moltbot/status/2019000000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Moltbot helps with code generation and debugging by understanding context and providing relevant solutions based on error messages.'
-                    },
-                    {
-                        authorName: 'AIAgent',
-                        authorUrl: 'https://x.com/AIAgent',
-                        postUrl: 'https://x.com/AIAgent/status/2019100000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Moltbot to automate customer support by answering common questions, escalating complex issues, and maintaining conversation logs.'
-                    },
-                    {
-                        authorName: 'TechReviewer',
-                        authorUrl: 'https://x.com/TechReviewer',
-                        postUrl: 'https://x.com/TechReviewer/status/2019200000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Moltbot can analyze product reviews, extract sentiment, and generate summary reports for product teams.'
-                    },
-                    {
-                        authorName: 'BusinessAnalyst',
-                        authorUrl: 'https://x.com/BusinessAnalyst',
-                        postUrl: 'https://x.com/BusinessAnalyst/status/2019300000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Moltbot to process business documents, extract key metrics, and create executive summaries automatically.'
-                    },
-                    {
-                        authorName: 'Educator',
-                        authorUrl: 'https://x.com/Educator',
-                        postUrl: 'https://x.com/Educator/status/2019400000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Moltbot helps create educational content by generating quiz questions, explaining concepts, and providing study guides.'
-                    },
-                    {
-                        authorName: 'Writer',
-                        authorUrl: 'https://x.com/Writer',
-                        postUrl: 'https://x.com/Writer/status/2019500000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Moltbot for content creation by researching topics, generating outlines, and drafting articles with proper citations.'
-                    },
-                    {
-                        authorName: 'HRManager',
-                        authorUrl: 'https://x.com/HRManager',
-                        postUrl: 'https://x.com/HRManager/status/2019600000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Moltbot automates resume screening by parsing applications, matching qualifications, and ranking candidates.'
-                    },
-                    {
-                        authorName: 'FinanceGuru',
-                        authorUrl: 'https://x.com/FinanceGuru',
-                        postUrl: 'https://x.com/FinanceGuru/status/2019700000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Moltbot to analyze financial reports, extract key numbers, and generate investment summaries.'
-                    },
-                    {
-                        authorName: 'LegalTech',
-                        authorUrl: 'https://x.com/LegalTech',
-                        postUrl: 'https://x.com/LegalTech/status/2019800000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Moltbot helps with contract analysis by identifying key clauses, highlighting risks, and summarizing terms.'
-                    },
-                    {
-                        authorName: 'HealthcareAI',
-                        authorUrl: 'https://x.com/HealthcareAI',
-                        postUrl: 'https://x.com/HealthcareAI/status/2019900000000000000?s=20',
-                        theme: 'Use Case',
-                        summary: 'Using Moltbot to process patient records, extract symptoms, and assist with preliminary diagnosis suggestions.'
-                    }
-                ]
-            };
-
-            const keywordLower = keyword.toLowerCase();
-            if (mockData[keywordLower]) {
-                return mockData[keywordLower].slice(0, count);
-            }
-
-            // Generic mock data for other keywords - using x.com format
-            return Array.from({ length: Math.min(count, 10) }, (_, i) => ({
-                authorName: `User${i + 1}`,
-                authorUrl: `https://x.com/User${i + 1}`,
-                postUrl: `https://x.com/User${i + 1}/status/${2017000000000000000 + i}?s=20`,
-                theme: i % 2 === 0 ? 'Use Case' : 'Other',
-                summary: `Discussion about ${keyword} and its applications in various domains.`
-            }));
-        }
-
-        async function analyzePastedLinks() {
-            const linkInput = document.getElementById('linkInput').value.trim();
-            if (!linkInput) {
-                alert('Please paste some Twitter links first');
-                return;
-            }
-
-            const lines = linkInput.split('\n').filter(line => line.trim());
-            const urls = lines.map(line => line.trim()).filter(url => 
-                url.includes('twitter.com') || url.includes('x.com')
-            );
-
-            if (urls.length === 0) {
-                alert('No valid Twitter URLs found. Please paste URLs like:\nhttps://twitter.com/username/status/1234567890');
-                return;
-            }
-
-            const resultsContainer = document.getElementById('resultsContainer');
-            resultsContainer.innerHTML = `
-                <div class="loading">
-                    <div class="spinner"></div>
-                    <p>Analyzing ${urls.length} links...</p>
-                </div>
-            `;
-
-            // Extract data from URLs
-            const results = [];
-            for (const url of urls) {
-                try {
-                    // Extract username and status ID from URL
-                    const match = url.match(/(?:twitter\.com|x\.com)\/([^\/]+)\/status\/(\d+)/);
-                    if (match) {
-                        const username = match[1];
-                        const statusId = match[2];
-                        
-                        results.push({
-                            authorName: username,
-                            authorUrl: `https://x.com/${username}`,
-                            postUrl: url.replace('twitter.com', 'x.com'), // Ensure x.com format
-                            theme: 'Use Case', // Would be determined by analyzing actual tweet content
-                            summary: `Tweet from @${username} - Content analysis would appear here if we could access the tweet.`
-                        });
-                    }
-                } catch (e) {
-                    console.error('Error parsing URL:', url, e);
-                }
-            }
-
-            currentResults = results;
-            displayResults(results);
-        }
-
-        // Allow Enter key to search
         document.getElementById('searchInput').addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 searchTwitter();
@@ -815,4 +717,3 @@
     </script>
 </body>
 </html>
-
