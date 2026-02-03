@@ -592,7 +592,13 @@
                 }
 
                 currentResults = data.results || [];
-                displayResults(currentResults);
+
+                // Show parsed query if different from input
+                if (data.query && data.query !== input) {
+                    console.log(`Parsed query: "${data.query}"`);
+                }
+
+                displayResults(currentResults, data.query);
 
             } catch (error) {
                 console.error('Error:', error);
@@ -608,7 +614,7 @@
             }
         }
 
-        function displayResults(results) {
+        function displayResults(results, parsedQuery) {
             const resultsContainer = document.getElementById('resultsContainer');
 
             if (!results || results.length === 0) {
@@ -616,6 +622,7 @@
                     <div class="empty-state">
                         <h3>No results found</h3>
                         <p>Try a different search term or check the search tips</p>
+                        ${parsedQuery ? `<p style="font-size: 12px; color: #999; margin-top: 10px;">Searched for: <code>${parsedQuery}</code></p>` : ''}
                     </div>
                 `;
                 return;
@@ -623,7 +630,7 @@
 
             let html = `
                 <div class="results-header">
-                    <div class="results-count">Found ${results.length} posts</div>
+                    <div class="results-count">Found ${results.length} posts ${parsedQuery ? `<span style="font-size: 12px; color: #999;">(searched: ${parsedQuery})</span>` : ''}</div>
                     <button class="download-btn" onclick="downloadResults()">
                         Download CSV
                     </button>
