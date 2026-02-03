@@ -501,8 +501,8 @@
                     onkeypress="if(event.key === 'Enter') searchTwitter()"
                 >
                 <select id="resultsCount" class="results-select" title="Number of results">
-                    <option value="10">10 results</option>
-                    <option value="20" selected>20 results</option>
+                    <option value="10" selected>10 results</option>
+                    <option value="20">20 results</option>
                     <option value="30">30 results</option>
                     <option value="50">50 results</option>
                 </select>
@@ -512,17 +512,17 @@
             </div>
             <div class="example-prompts">
                 <span style="color: #657786; margin-right: 10px;">Examples:</span>
-                <span class="example-prompt" onclick="setPrompt('clawbot')">
-                    clawbot
-                </span>
-                <span class="example-prompt" onclick="setPrompt('OpenClaw min_faves:10')">
-                    OpenClaw min_faves:10
+                <span class="example-prompt" onclick="setPrompt('OpenClaw')">
+                    OpenClaw
                 </span>
                 <span class="example-prompt" onclick="setPrompt('moltbot')">
                     moltbot
                 </span>
-                <span class="example-prompt" onclick="setPrompt('#AIagents')">
-                    #AIagents
+                <span class="example-prompt" onclick="setPrompt('#AIagents min_faves:10')">
+                    #AIagents min_faves:10
+                </span>
+                <span class="example-prompt" onclick="setPrompt('from:anthropic')">
+                    from:anthropic
                 </span>
             </div>
         </div>
