@@ -187,6 +187,21 @@
             transition: all 0.3s;
         }
 
+        .results-select {
+            padding: 15px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+            min-width: 120px;
+        }
+
+        .results-select:focus {
+            outline: none;
+            border-color: #1da1f2;
+        }
+
         .search-input:focus {
             outline: none;
             border-color: #1da1f2;
@@ -485,6 +500,12 @@
                     placeholder="Enter search query, e.g., 'OpenClaw min_faves:50' - click ? for tips"
                     onkeypress="if(event.key === 'Enter') searchTwitter()"
                 >
+                <select id="resultsCount" class="results-select" title="Number of results">
+                    <option value="10">10 results</option>
+                    <option value="20" selected>20 results</option>
+                    <option value="30">30 results</option>
+                    <option value="50">50 results</option>
+                </select>
                 <button class="search-btn" onclick="searchTwitter()" id="searchBtn">
                     Search
                 </button>
@@ -568,6 +589,9 @@
             `;
 
             try {
+                // Get selected results count
+                const resultsCount = parseInt(document.getElementById('resultsCount').value) || 20;
+
                 // Send the full search query directly to the API
                 const response = await fetch('/api/search', {
                     method: 'POST',
@@ -576,7 +600,7 @@
                     },
                     body: JSON.stringify({
                         query: input,
-                        count: 50
+                        count: resultsCount
                     })
                 });
 
