@@ -1,18 +1,20 @@
-"""
-Vercel Serverless Function for Twitter Search
-"""
-
 from http.server import BaseHTTPRequestHandler
-from apify_client import ApifyClient
 import json
 import os
 import re
+
+# Check if apify_client is available
+try:
+    from apify_client import ApifyClient
+    APIFY_AVAILABLE = True
+except ImportError:
+    APIFY_AVAILABLE = False
 
 APIFY_API_TOKEN = os.getenv('APIFY_API_TOKEN')
 ACTOR_ID = "apidojo/tweet-scraper"
 
 
-def extract_keyword(prompt: str) -> str:
+def extract_keyword(prompt):
     patterns = [
         r"keyword\s+['\"]?(\w+)['\"]?",
         r"about\s+['\"]?(\w+)['\"]?",
@@ -29,14 +31,14 @@ def extract_keyword(prompt: str) -> str:
     return ""
 
 
-def extract_count(prompt: str) -> int:
+def extract_count(prompt):
     match = re.search(r'top\s+(\d+)', prompt, re.IGNORECASE)
     if match:
         return int(match.group(1))
     return 50
 
 
-def analyze_tweet_content(text: str, keyword: str) -> dict:
+def analyze_tweet_content(text, keyword):
     text_lower = text.lower()
     use_case_keywords = [
         'use', 'using', 'used', 'build', 'built', 'create', 'created',
@@ -86,7 +88,9 @@ def analyze_tweet_content(text: str, keyword: str) -> dict:
     return {'theme': theme, 'summary': summary}
 
 
-def scrape_twitter_apify(keyword: str, count: int = 50) -> list:
+def scrape_twitter_apify(keyword, count=50):
+    if not APIFY_AVAILABLE:
+        raise ValueError("apify_client not installed")
     if not APIFY_API_TOKEN:
         raise ValueError("APIFY_API_TOKEN not configured")
 
@@ -104,7 +108,6 @@ def scrape_twitter_apify(keyword: str, count: int = 50) -> list:
     for item in client.dataset(run["defaultDatasetId"]).iterate_items():
         author = item.get('author', {})
         author_name = author.get('userName', 'Unknown')
-        author_display = author.get('name', author_name)
         tweet_url = item.get('url', '')
         if not tweet_url and item.get('id'):
             tweet_url = f"https://x.com/{author_name}/status/{item.get('id')}"
@@ -114,15 +117,12 @@ def scrape_twitter_apify(keyword: str, count: int = 50) -> list:
 
         results.append({
             'authorName': f"@{author_name}",
-            'authorDisplayName': author_display,
             'authorUrl': f"https://x.com/{author_name}",
             'postUrl': tweet_url,
             'theme': analysis['theme'],
             'summary': analysis['summary'] if analysis['summary'] else text[:200],
             'likes': item.get('likeCount', 0),
             'retweets': item.get('retweetCount', 0),
-            'replies': item.get('replyCount', 0),
-            'views': item.get('viewCount', 0),
             'fullText': text
         })
 
@@ -132,60 +132,47 @@ def scrape_twitter_apify(keyword: str, count: int = 50) -> list:
 
 class handler(BaseHTTPRequestHandler):
     def do_POST(self):
-        content_length = int(self.headers.get('Content-Length', 0))
-        body = self.rfile.read(content_length)
-
         try:
+            content_length = int(self.headers.get('Content-Length', 0))
+            body = self.rfile.read(content_length)
             data = json.loads(body) if body else {}
+
             prompt = data.get('prompt', '')
             keyword = data.get('keyword', '') or extract_keyword(prompt)
             count = data.get('count', 50) or extract_count(prompt)
 
             if not keyword:
-                self.send_response(400)
-                self.send_header('Content-type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps({
-                    'error': 'Could not extract keyword from prompt'
-                }).encode())
+                self._send_json(400, {'error': 'Could not extract keyword from prompt'})
                 return
 
             if not APIFY_API_TOKEN:
-                self.send_response(500)
-                self.send_header('Content-type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps({
-                    'error': 'APIFY_API_TOKEN not configured on server'
-                }).encode())
+                self._send_json(500, {'error': 'APIFY_API_TOKEN not configured on server'})
                 return
 
             results = scrape_twitter_apify(keyword, count)
-
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps({
+            self._send_json(200, {
                 'success': True,
                 'results': results,
                 'keyword': keyword,
                 'count': len(results)
-            }).encode())
+            })
 
         except Exception as e:
-            self.send_response(500)
-            self.send_header('Content-type', 'application/json')
-            self.send_header('Access-Control-Allow-Origin', '*')
-            self.end_headers()
-            self.wfile.write(json.dumps({
-                'error': str(e)
-            }).encode())
+            self._send_json(500, {'error': str(e)})
+
+    def do_GET(self):
+        self._send_json(200, {'status': 'API is running', 'apify_configured': bool(APIFY_API_TOKEN)})
 
     def do_OPTIONS(self):
         self.send_response(200)
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'POST, OPTIONS')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
         self.send_header('Access-Control-Allow-Headers', 'Content-Type')
         self.end_headers()
+
+    def _send_json(self, status, data):
+        self.send_response(status)
+        self.send_header('Content-Type', 'application/json')
+        self.send_header('Access-Control-Allow-Origin', '*')
+        self.end_headers()
+        self.wfile.write(json.dumps(data).encode())
